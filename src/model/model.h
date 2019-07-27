@@ -27,7 +27,7 @@ namespace PlasmaLab {
         IsBreakdown breakdown_key;              //показывает был или не был пробой плазмы
         WorkMode work_mode;                     //режим работы программы
 
-        int system_size;                        //размерность системы уравнений, до того как возникла плазма
+        uint32_t system_size;                   //размерность системы уравнений, до того как возникла плазма
         int coils_count;                        //количество управляющих катушек
         int short_step;                         //чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
         int control_points_count;               //количество контрольных точек на контуре плазмы

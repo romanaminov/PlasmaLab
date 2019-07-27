@@ -1,7 +1,7 @@
 QT += core
 QT -= gui
 
-CONFIG += c++11
+CONFIG += c++17
 
 TARGET = PlasmaLab
 CONFIG += console
@@ -16,7 +16,6 @@ SOURCES += src/main.cpp \
     src/model/functionals.cpp
 
 DEFINES += QT_DEPRECATED_WARNINGS
-
 
 HEADERS += src/read_data/read_data.h \
     src/common.h \

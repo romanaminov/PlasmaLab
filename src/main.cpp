@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     string path;
 #ifdef Q_OS_WIN32
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("IBM 866"));
-    path = "C:\\QtProjects\\PlasmaLab\\PlasmaLab_001\\const_init_data\\";
+    //path = "C:\\QtProjects\\PlasmaLab\\PlasmaLab_001\\const_init_data\\";
+    path = "D:\\YandexDisk\\PORTFOLIO\\27.07.1019\\PlasmaLab\\const_init_data\\";
 #endif
 
 #ifdef Q_OS_LINUX
@@ -53,7 +54,8 @@ int main(int argc, char *argv[])
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
     std::cout << QString::fromUtf8("Вычисления закончены в ").toLocal8Bit().data() << std::ctime(&end_time)
-              << QString::fromUtf8("Время выполнения: ").toLocal8Bit().data() << elapsed_seconds << " мс.\n";
+              << QString::fromUtf8("Время выполнения: ").toLocal8Bit().data() << elapsed_seconds
+              << QString::fromUtf8(" мс.\n").toLocal8Bit().data();
 
     return a.exec();
 }

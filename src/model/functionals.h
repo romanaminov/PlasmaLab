@@ -16,7 +16,7 @@ namespace PlasmaLab {
     /*В классе происходит проверка условий пробоя и вычисление значений интегральных функционалов до Пробоя включительно*/
     class BeforeBD{
     protected:
-      IsBreakdown bd_key; ///< ключ, были или не был пробой
+      IsBreakdown bd_key; ///< ключ, был или не был пробой
       IsRequirements requiments_key; ///< соблюдены ли технологические и физические ограничения на систему
       bool init_key; ///< ключ, если false, значит первая итерация в методе Рунге-Кутта
       double u_loop; ///< напряжение на обходе
@@ -60,7 +60,7 @@ namespace PlasmaLab {
 
     class FunctionalModel{
 
-        const uint size_func_idx = 10; ///< общее кол-во штрахных функций +1 общий функионал суммы
+        const uint size_func_idx = FuncIdx::count; ///< общее кол-во штрахных функций +1 общий функионал суммы
         BeforeBD beforeBD; ///< модель функционала до пробоя
         IsBreakdown bd_key; ///< был или не был пробой
         IsRequirements requirements_key; ///< соблюдены ли технологические и физические ограничения на систему
