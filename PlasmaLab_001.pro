@@ -16,6 +16,8 @@ SOURCES += src/main.cpp \
     src/model/functionals.cpp
 
 DEFINES += QT_DEPRECATED_WARNINGS
+QTC_CLANG_CMD_OPTIONS_BLACKLIST=-fno-keep-inline-dllexport
+#CXXFLAGS=-fno-keep-inline-dllexport
 
 HEADERS += src/read_data/read_data.h \
     src/common.h \
