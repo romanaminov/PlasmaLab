@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("IBM 866"));
     //path = "C:\\QtProjects\\PlasmaLab\\PlasmaLab_001\\const_init_data\\";
     path = "D:\\YandexDisk\\PORTFOLIO\\27.07.1019\\PlasmaLab\\const_init_data\\";
+    path = "C:\\Projects\\1_no_change\\";
 #endif
 
 #ifdef Q_OS_LINUX

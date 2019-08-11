@@ -1,23 +1,6 @@
 #include "src/model/model.h"
 
 namespace  PlasmaLab {
-    void matrix_multiplier(const vec_d &m1, const vec_d &m2,vec_d &m3_res, int m1_width, int m2_high){
-    // для примера, пусть матрица m1 имеет размерность 3на3, а m2 размерность 2на3.тогда m1_width=3, а  m2_high=2
-        for(int n = 0;n < m1_width; ++n){
-            for(int i = 0;i < m2_high;++i){
-                for(int j = 0;j < m1_width;++j){
-                    m3_res[n * m2_high + i] += m1[n * m1_width + j] * m2[m2_high * j + i];
-                }
-            }
-        }
-    }
-    void matrix_multiplier(double &val, const vec_d &v1,const vec_d &v2){
-        val=0;
-        for(unsigned int j = 0;j < v1.size();++j){
-            val += v1[j] * v2[j];
-        }
-    }
-
     Model::Model(void)
     {
         breakdown_key               = IsBreakdown::no;
@@ -257,7 +240,7 @@ namespace  PlasmaLab {
                 number = i;
                 inclusion = false;
             }
-            if ((sub_pf[i] == time_step) || ((::fabs(time_step - sub_pf[i]) < integration_step))){
+            if (::fabs(time_step - sub_pf[i]) <= integration_step){
                 number = i;
                 inclusion = true;
             }
@@ -303,39 +286,7 @@ namespace  PlasmaLab {
                 k /= (required_current_plasma[i - 1]);
             }
         }
-
         k = k / control_points_count;
-
         return k;
-        /*
-        if(current_time <= 1.1805)
-            k = (71971.224 - 0)/(1.1805 - 1.1268);
-        else if(current_time <= 1.2341)
-            k = (133149.7 - 71971.224)/(1.2341 - 1.1805);
-        else if(current_time <= 1.2878)
-            k = (185931.58 - 133149.7)/(1.2878 - 1.2341);
-        else if(current_time <= 1.3415)
-            k = (231930.25 - 185931.58)/(1.3415 - 1.2878);
-        else if(current_time <= 1.3951)
-            k = (273716.56 - 231930.25)/(1.3951 - 1.3415);
-        else if(current_time <= 1.4488)
-            k = (313873.73- 273716.56)/(1.4488- 1.3951);
-        else if(current_time <= 1.5024)
-            k = (353530.87 - 313873.73)/(1.5024 - 1.4488);
-        else if(current_time <= 1.5561)
-            k = (392298.85 - 353530.87)/(1.5561 - 1.5024);
-        else if(current_time <= 1.6098)
-            k = (429749.42 - 392298.85)/(1.6098 - 1.5561);
-        else if(current_time <= 1.6634)
-            k = (466027.29 - 429749.42)/(1.6634 - 1.6098);
-        //k = (466027.29)/(1.6634 - 1.1268);//timeBD);
-        //k=0;
-        k = k / control_points_count;
-
-    //    val = k;
-        return k;
-*/
     }
-
-
 }

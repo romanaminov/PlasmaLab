@@ -10,6 +10,7 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += src/main.cpp \
+    src/common.cpp \
     src/read_data/read_data.cpp \
     src/model/model.cpp \
     src/write_data/write_data.cpp \
