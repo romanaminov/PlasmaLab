@@ -1,17 +1,31 @@
 #include "src/model/functionals.h"
 
 namespace  PlasmaLab {
-    BeforeBD::BeforeBD(const ReadData &rd) : number_coils(rd.get_coils_count()), requiments_key(IsRequirements::no),bd_key(IsBreakdown::no), init_key(false), u_loop(0),
-        nessesary_u_loop(rd.get_required_loop_voltage()),
-        r_field_max(rd.get_r_field_max()), z_field_max(rd.get_z_field_max()) {
-        for(int i=0;i < rd.get_control_points();++i){
+    BeforeBD::BeforeBD(const ReadData &rd) :
+        number_coils(rd.get_coils_count()),
+        requiments_key(IsRequirements::no),
+        bd_key(IsBreakdown::no),
+        init_key(false),
+        u_loop(0),
+        r_field_max(rd.get_r_field_max()),
+        z_field_max(rd.get_z_field_max()),
+        nessesary_u_loop(rd.get_required_loop_voltage())
+    {
+        for(uint64_t i=0;i < rd.get_control_points();++i){
             r_fields.push_back(0);
             z_fields.push_back(0);
         }
     }
-    IsBreakdown BeforeBD::run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                                                       const vvec_d &alfa_r,const vvec_d &alfa_z){
-
+    IsBreakdown BeforeBD::run(const vec_d &weighting_factors,
+                              vec_d &functional_values,
+                              IsRequirements &out_requiments_key,
+                              uint64_t point,
+                              const vvec_d &currents,
+                              const vvec_d &derivative_of_current,
+                              const vvec_d &alfa_psi,
+                              const vvec_d &alfa_r,
+                              const vvec_d &alfa_z)
+    {
         double prev_u_loop = u_loop;
         calc_conditions_bd(weighting_factors,functional_values,point,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z);
 
@@ -22,8 +36,15 @@ namespace  PlasmaLab {
         return bd_key;
     }
 
-    void BeforeBD::calc_conditions_bd(const vec_d &weighting_factors,vec_d &functional_values,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                            const vvec_d &alfa_r,const vvec_d &alfa_z){
+    void BeforeBD::calc_conditions_bd(const vec_d &weighting_factors,
+                                      vec_d &functional_values,
+                                      uint64_t point,
+                                      const vvec_d &currents,
+                                      const vvec_d &derivative_of_current,
+                                      const vvec_d &alfa_psi,
+                                      const vvec_d &alfa_r,
+                                      const vvec_d &alfa_z)
+    {
         bd_key = IsBreakdown::yes;
        // double prev_u_loop = u_loop;
         matrix_multiplier(u_loop,derivative_of_current[point], alfa_psi[0]);//напряжение на обходе
@@ -42,7 +63,9 @@ namespace  PlasmaLab {
 
     }
 
-    void BeforeBD::calc_requiments(const vec_d &weighting_factors,vec_d &functional_values,double prev_u_loop){
+    void BeforeBD::calc_requiments(const vec_d &weighting_factors,
+                                   vec_d &functional_values,
+                                   double prev_u_loop){
         if(bd_key == IsBreakdown::no && init_key == false)
             prev_u_loop = u_loop;//необходимо для вычисления производной напряжения на обходе
 
@@ -57,13 +80,28 @@ namespace  PlasmaLab {
         }*/
     }
 
-    IsBreakdown AfterBD::run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                             const vvec_d &alfa_r,const vvec_d &alfa_z) {
+    IsBreakdown AfterBD::run(const vec_d &weighting_factors,
+                             vec_d &functional_values,
+                             IsRequirements &out_requiments_key,
+                             int point,
+                             const vvec_d &currents,
+                             const vvec_d &derivative_of_current,
+                             const vvec_d &alfa_psi,
+                             const vvec_d &alfa_r,
+                             const vvec_d &alfa_z)
+    {
         int i = 0;
     }
 
-    void FunctionalModel::run(const vec_d &weighting_factors,vec_d &functional_values,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                                     const vvec_d &alfa_r,const vvec_d &alfa_z){
+    void FunctionalModel::run(const vec_d &weighting_factors,
+                              vec_d &functional_values,
+                              uint64_t point,
+                              const vvec_d &currents,
+                              const vvec_d &derivative_of_current,
+                              const vvec_d &alfa_psi,
+                              const vvec_d &alfa_r,
+                              const vvec_d &alfa_z)
+    {
         if(bd_key == IsBreakdown::no){
             bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,currents,derivative_of_current, alfa_psi,alfa_r,alfa_z);
         }else{

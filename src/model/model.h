@@ -27,10 +27,10 @@ namespace PlasmaLab {
         IsBreakdown breakdown_key;              //показывает был или не был пробой плазмы
         WorkMode work_mode;                     //режим работы программы
 
-        uint32_t system_size;                   //размерность системы уравнений, до того как возникла плазма
-        int coils_count;                        //количество управляющих катушек
-        int short_step;                         //чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
-        int control_points_count;               //количество контрольных точек на контуре плазмы
+        uint8_t short_step;                     //чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
+        uint64_t system_size;                   //размерность системы уравнений, до того как возникла плазма
+        uint64_t coils_count;                   //количество управляющих катушек
+        uint64_t control_points_count;          //количество контрольных точек на контуре плазмы
 
         double required_loop_voltage;           //необходимое для пробоя плазмы напряжение на обходе
         double r_field_max,
@@ -69,7 +69,7 @@ namespace PlasmaLab {
         /*вычислить напряжение в катушке в текущий момент времени*/
         inline void voltage_calculator(double);
         /*вычислить значение текущего времени */
-        inline int time_comparison(bool &, double, const vec_d &);
+        inline uint64_t time_comparison(bool &, double, const vec_d &);
         inline int parser_alfa_xxx(const ReadData &);
         /*вычислить обратную матрицу индукнитвностей*/
         inline int slau_gauss(vec_d &, vec_d);

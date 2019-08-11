@@ -29,15 +29,14 @@ namespace  PlasmaLab {
 
     int Model::slau_gauss(vec_d &back_inductances, vec_d inductances)//должны приходить вектора забитые нулями с определенной длинной
     {
-        int length = std::pow(inductances.size(),0.5);
+        int length = static_cast<int>(std::pow(inductances.size(),0.5));
         vec_d identity_matrix(length*length,0);
         for (int i = 0; i < length; ++i)
             identity_matrix[length*i+i] = 1;
         //прямой ход метода Гаусса++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        double buf;
+        double buf = 0;
         vec_d tmp_vec(length,0);
-        int r = 0;
-        for(int i = 0;i < length; ++i)
+        for(int r = 0, i = 0;i < length; ++i)
         {
             r = i;
             if(inductances[length * i + i] == 0)
@@ -91,24 +90,24 @@ namespace  PlasmaLab {
               Y_t_2(system_size,0),
               Y_t_3(system_size,0);
         breakdown_key = IsBreakdown::no;//пробоя НЕТ
-        for (int j = 1; j < number_of_steps_in_method; ++j){	//почему  длинна цикла не больше +1
+        for (uint64_t j = 1; j < number_of_steps_in_method; ++j){	//почему  длинна цикла не больше +1
             time_step += integration_step;
             voltage_calculator(time_step);
             model_combined_equations(time_step, currents[j-1], k1);
-            for (int i = 0; i < system_size; i++){
+            for (uint64_t i = 0; i < system_size; i++){
                 derivative_of_current[j-1][i] = k1[i] / integration_step;
                 Y_t_1[i] = 0.5 * k1[i] + currents[j-1][i];
             }
             voltage_calculator(time_step + integration_step * 0.5);
             model_combined_equations(time_step + integration_step * 0.5, Y_t_1, k2);
-            for (int i = 0; i < system_size; i++)
+            for (uint64_t i = 0; i < system_size; i++)
                 Y_t_2[i] = 0.5 * k2[i] + currents[j-1][i];
             model_combined_equations(time_step + integration_step * 0.5, Y_t_2, k3);
-            for (int i = 0; i < system_size; i++)
+            for (uint64_t i = 0; i < system_size; i++)
                 Y_t_3[i] = k3[i] + currents[j-1][i];
             voltage_calculator(time_step + integration_step);
             model_combined_equations(time_step + integration_step, Y_t_3, k4);
-            for(int i=0; i < system_size; i++)
+            for(uint64_t i=0; i < system_size; i++)
                 currents[j][i] = currents[j-1][i] + (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) / 6;
 
             if(breakdown_key != IsBreakdown::yes){
@@ -122,7 +121,7 @@ namespace  PlasmaLab {
     }
 
     int Model::parser_alfa_xxx(const ReadData &read_data){
-        for(int i = 0;i < control_points_count;++i){
+        for(uint64_t i = 0;i < control_points_count;++i){
             alfa_r.push_back(vec_d(system_size,0));
             alfa_z.push_back(vec_d(system_size,0));
             alfa_psi.push_back(vec_d(system_size,0));
@@ -134,8 +133,8 @@ namespace  PlasmaLab {
         read_data.get_alfa_r(alfa_r_old);
         read_data.get_alfa_z(alfa_z_old);
         read_data.get_alfa_psi(alfa_ps_old);
-        for(int i=0;i<system_size;i++){
-            for(int j=0;j<control_points_count;j++){
+        for(uint64_t i=0;i<system_size;i++){
+            for(uint64_t j=0;j<control_points_count;j++){
                 alfa_r[j][i] = alfa_r_old[i + j * system_size];
                 alfa_z[j][i] = alfa_z_old[i + j * system_size];
                 alfa_psi[j][i] = alfa_ps_old[i + j * system_size];
@@ -143,8 +142,8 @@ namespace  PlasmaLab {
         }
 
         plasma_inductance_matrix.resize(alfa_ps_old.size());
-        for(int i = 0;i < control_points_count;++i){//транспонирование матрицы - проверка показала все ОК
-            for(int j = 0;j < system_size;++j)
+        for(uint64_t i = 0;i < control_points_count;++i){//транспонирование матрицы - проверка показала все ОК
+            for(uint64_t j = 0;j < system_size;++j)
                 plasma_inductance_matrix[i + j * control_points_count] = alfa_ps_old[i * system_size + j];
         }
 
@@ -161,11 +160,11 @@ namespace  PlasmaLab {
                 slau_gauss(inverse_inductance_matrix,inductance_matrix);
 
                 number_of_steps_in_method = read_data.get_work_time() / read_data.get_integration_step() + 1;//количество итераций в рунге-кутта 4
-                currents.resize((int)number_of_steps_in_method);
-                for(unsigned int i = 0; i < currents.size(); ++i )
+                currents.resize(static_cast<uint64_t>(number_of_steps_in_method));
+                for(uint64_t i = 0; i < currents.size(); ++i )
                     currents[i].resize(system_size, 0);
                 derivative_of_current.resize(currents.size() - 1);
-                for (unsigned int i = 0; i < derivative_of_current.size(); ++i)
+                for (uint64_t i = 0; i < derivative_of_current.size(); ++i)
                     derivative_of_current[i].resize(system_size, 0);
                 read_data.get_initial_currents(currents[0]);
             });
@@ -176,7 +175,7 @@ namespace  PlasmaLab {
         coils_count = read_data.get_coils_count();
         control_points_count = read_data.get_control_points();
         work_time = read_data.get_work_time();
-        work_mode = (WorkMode)read_data.get_work_mode();
+        work_mode = static_cast<WorkMode>(read_data.get_work_mode());
         short_step = read_data.get_short_step();
         epsilon = read_data.get_epsilon();
 
@@ -211,11 +210,11 @@ namespace  PlasmaLab {
     }    
     void Model::voltage_calculator(double time_step)
     {
-        for(int i = 0; i < coils_count; ++i)
+        for(uint64_t i = 0; i < coils_count; ++i)
             voltages_in_some_momente[i] = 0;
-        int number = 0;
+        uint64_t number = 0;
         bool inclusion = false;
-        for(int i = 1;i <= coils_count;++i){
+        for(uint64_t i = 1;i <= coils_count;++i){
             number = time_comparison(inclusion, time_step, voltage_in_coils[i-1]);
             if (!inclusion)
                 voltages_in_some_momente[i - 1] = dependence_U_on_T(voltage_in_coils[i - 1][number], voltage_in_coils[i-1][number + 2],
@@ -232,9 +231,9 @@ namespace  PlasmaLab {
         u = a * t + b;
         return u;
     }
-    int Model::time_comparison(bool &inclusion, double time_step,const vec_d & sub_pf){
-        int number = 0;
-        for (unsigned i = 0; i < (sub_pf.size()) ; i = i + 2)
+    uint64_t Model::time_comparison(bool &inclusion, double time_step,const vec_d & sub_pf){
+        uint64_t number = 0;
+        for (uint64_t i = 0; i < sub_pf.size(); i = i + 2)
         {
             if (sub_pf[i] < time_step){
                 number = i;
@@ -252,19 +251,19 @@ namespace  PlasmaLab {
     void Model::model_combined_equations(double time_step, vec_d &current_in_some_momente,vec_d &KN){
         double tmp1 = 0, tmp2 = 0, val=0;
 
-        for (int i = 0; i < system_size; ++i){
+        for (uint64_t i = 0; i < system_size; ++i){
             tmp1 = 0; tmp2 = 0;
-            for (int j = 0; j < system_size; ++j)
+            for (uint64_t j = 0; j < system_size; ++j)
                 tmp1 = tmp1 + inverse_L_on_R_matrix[i * system_size + j] * current_in_some_momente[j];
 
-            for (int j = 0; j < system_size; ++j)
+            for (uint64_t j = 0; j < system_size; ++j)
                 tmp2 = tmp2 + inverse_inductance_matrix[i * system_size + j] * voltages_in_some_momente[j];
 
             tmp1 = tmp2 - tmp1;
             if(breakdown_key == IsBreakdown::yes){
                 val = law_of_plasma_current(time_step);
                 tmp2 = 0;
-                for (int j = 0; j < control_points_count; ++j)
+                for (uint64_t j = 0; j < control_points_count; ++j)
                     tmp2 = tmp2 + inverse_L_on_Mp_matrix[i * control_points_count + j];
                 tmp2 *= val;
                 tmp1 = tmp1 - tmp2;
@@ -278,7 +277,7 @@ namespace  PlasmaLab {
                t = current_time;
         if(!required_current_plasma.empty())
             t += required_current_plasma[0];
-        for(unsigned int i = 3; i <= required_current_plasma.size(); i += 2 )
+        for(uint64_t i = 3; i <= required_current_plasma.size(); i += 2 )
         {
             t += required_current_plasma[i - 1];
             if(current_time <= t){

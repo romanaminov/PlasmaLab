@@ -96,7 +96,7 @@ namespace PlasmaLab {
                                                                     "pf5.txt",
                                                                     "pf6.txt"};
 
-    void matrix_multiplier(const vec_d &, const vec_d &,vec_d &, uint32_t, uint32_t);
+    void matrix_multiplier(const vec_d &, const vec_d &,vec_d &, uint64_t, uint64_t);
     void matrix_multiplier(double &, const vec_d &,const vec_d &);
 
 }

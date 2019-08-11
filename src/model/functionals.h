@@ -16,28 +16,28 @@ namespace PlasmaLab {
     /*В классе происходит проверка условий пробоя и вычисление значений интегральных функционалов до Пробоя включительно*/
     class BeforeBD{
     protected:
-      IsBreakdown bd_key; ///< ключ, был или не был пробой
+      uint64_t number_coils; ///< кол-во полоидальных (управляющих) катушек
       IsRequirements requiments_key; ///< соблюдены ли технологические и физические ограничения на систему
+      IsBreakdown bd_key; ///< ключ, был или не был пробой
       bool init_key; ///< ключ, если false, значит первая итерация в методе Рунге-Кутта
       double u_loop; ///< напряжение на обходе
       vector<double> r_fields; ///< значения радиальной компоненты магнитного поля в контрольных точках
       vector<double> z_fields; ///< значения вертикальной компоненты магнитного поля в контрольных точках
       vec_d max_currents; ///< максимально допустимые токи в полоидальных катушках
-      int number_coils; ///< кол-во полоидальных (управляющих) катушек
       double r_field_max, ///< максимальное значения радиальной компоненты магнитного поля в каждой контрольной точке
              z_field_max, ///< максимальное значения вертикальной компоненты магнитного поля в каждой контрольной точке
              nessesary_u_loop; ///< необходимое для пробоя значение напряжения на обходе контура
 
       void calc_requiments(const vec_d &weighting_factors,vec_d &functional_values,double prev_u_loop);
     private:
-      void calc_conditions_bd(const vec_d &weighting_factors,vec_d &functional_values,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
+      void calc_conditions_bd(const vec_d &weighting_factors,vec_d &functional_values,uint64_t point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
                               const vvec_d &alfa_r,const vvec_d &alfa_z);
     public:
       BeforeBD() = delete;
       /*единственно возможный конструктор*/
       BeforeBD(const ReadData &rd);
       /*проверка условий пробоя, выполнены ли они.*/
-      IsBreakdown run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
+      IsBreakdown run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,uint64_t point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
                                   const vvec_d &alfa_r,const vvec_d &alfa_z);
 
       /*получить текущее значение напряжения на обходе*/
@@ -70,7 +70,7 @@ namespace PlasmaLab {
         FunctionalModel() = delete;
         FunctionalModel(const ReadData &rd) : beforeBD(rd){}
 
-        void run(const vec_d &weighting_factors,vec_d &functional_values,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,const vvec_d &alfa_r,const vvec_d &alfa_z);
+        void run(const vec_d&,vec_d&,uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
 
         //const BeforeBD &get_BeforeBD() const { return beforeBD; }
         IsBreakdown get_IsBreakdown() {return bd_key;}

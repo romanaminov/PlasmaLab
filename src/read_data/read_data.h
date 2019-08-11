@@ -25,10 +25,10 @@ namespace PlasmaLab {
      * класса не рекомендуется.
      */
     class ReadData{
-        int system_size;                        ///размерность системы уравнений, до того как возникла плазма
-        int coils_count;                        ///количество управляющих катушек
-        int short_step;                         ///чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
-        int control_points_count;               ///количество контрольных точек на контуре плазмы
+        uint64_t system_size;                        ///размерность системы уравнений, до того как возникла плазма
+        uint64_t coils_count;                        ///количество управляющих катушек
+        uint8_t short_step;                         ///чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
+        uint64_t control_points_count;               ///количество контрольных точек на контуре плазмы
         int work_mode;                          ///режим работы программы
 
         double required_loop_voltage;           ///необходимое для пробоя плазмы напряжение на обходе
@@ -178,22 +178,22 @@ namespace PlasmaLab {
         Возвращет размерность решаемой системы линейных дифф. уравнений 1го порядка (а также кол-во контуров в системе)
         \result int system_size
         */
-        inline int get_system_size() const{                                    return system_size;}
+        inline uint64_t get_system_size() const{                                    return system_size;}
         /*!
         чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
         \result int short_step
         */
-        inline int get_short_step() const{                                     return short_step; }
+        inline uint8_t get_short_step() const{                                     return short_step; }
         /*!
         Возвращает кол-во контрольных точек в плазменном шнуре.
         \result int control_points_count
         */
-        inline int get_control_points() const{                                 return control_points_count; }
+        inline uint64_t get_control_points() const{                                 return control_points_count; }
         /*!
         Возвращает кол-во полоидальных катушек.
         \result int coils_count
         */
-        inline int get_coils_count() const{                                    return coils_count; }
+        inline uint64_t get_coils_count() const{                                    return coils_count; }
         /*!
         Изменяет начальный ток в какой-либо управляющей катушке.
         \param[in] int, double Номер катушки и добавляемое значение.
