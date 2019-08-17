@@ -37,8 +37,7 @@ namespace PlasmaLab {
       /*единственно возможный конструктор*/
       BeforeBD(const ReadData &rd);
       /*проверка условий пробоя, выполнены ли они.*/
-      IsBreakdown run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,uint64_t point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                                  const vvec_d &alfa_r,const vvec_d &alfa_z);
+      IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
 
       /*получить текущее значение напряжения на обходе*/
       double get_u_loop() const;
@@ -68,9 +67,11 @@ namespace PlasmaLab {
         vec_d functional_values; ///< значения штрафных функций
     public:
         FunctionalModel() = delete;
-        FunctionalModel(const ReadData &rd) : beforeBD(rd){}
+        FunctionalModel(const ReadData &rd) : beforeBD(rd){
+            bd_key = IsBreakdown::no;
+        }
 
-        void run(const vec_d&,vec_d&,uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
+        IsBreakdown run(uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
 
         //const BeforeBD &get_BeforeBD() const { return beforeBD; }
         IsBreakdown get_IsBreakdown() {return bd_key;}

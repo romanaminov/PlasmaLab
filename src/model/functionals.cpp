@@ -29,7 +29,7 @@ namespace  PlasmaLab {
         double prev_u_loop = u_loop;
         calc_conditions_bd(weighting_factors,functional_values,point,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z);
 
-        calc_requiments(weighting_factors,functional_values,prev_u_loop);
+       // calc_requiments(weighting_factors,functional_values,prev_u_loop);
 
         out_requiments_key = requiments_key;
 
@@ -46,20 +46,20 @@ namespace  PlasmaLab {
                                       const vvec_d &alfa_z)
     {
         bd_key = IsBreakdown::yes;
-       // double prev_u_loop = u_loop;
         matrix_multiplier(u_loop,derivative_of_current[point], alfa_psi[0]);//напряжение на обходе
         for(uint i = 0;i < r_fields.size(); ++i){ //находим магнитное поле в контрольных точках
             matrix_multiplier(r_fields[i],currents[point], alfa_r[i]);
             matrix_multiplier(z_fields[i],currents[point], alfa_z[i]);
         }
         for(uint i = 0; i < r_fields.size(); ++i){
-            if(fabs(r_fields[i])>r_field_max)
+            if(fabs(r_fields[i]) >= r_field_max)
                 bd_key =  IsBreakdown::no;//если радиальная компонента маг.поля больше МАХ
-            if(fabs(z_fields[i])>z_field_max)
+            if(fabs(z_fields[i]) >= z_field_max)
                 bd_key =  IsBreakdown::no;//если вертикальная компонента маг.поля больше МАХ
         }
-        if( ( fabs(u_loop )>(nessesary_u_loop+0.5) ) || ( fabs(u_loop)<(nessesary_u_loop - 0.3) ) )
+        if( fabs(u_loop) > (nessesary_u_loop+0.2) || fabs(u_loop) < (nessesary_u_loop - 0.2) )
             bd_key =  IsBreakdown::no; //если напряжение на обходе не равно заданному значению (+/- дельта)
+
 
     }
 
@@ -93,9 +93,7 @@ namespace  PlasmaLab {
         int i = 0;
     }
 
-    void FunctionalModel::run(const vec_d &weighting_factors,
-                              vec_d &functional_values,
-                              uint64_t point,
+    IsBreakdown FunctionalModel::run(uint64_t point,
                               const vvec_d &currents,
                               const vvec_d &derivative_of_current,
                               const vvec_d &alfa_psi,
@@ -104,10 +102,11 @@ namespace  PlasmaLab {
     {
         if(bd_key == IsBreakdown::no){
             bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,currents,derivative_of_current, alfa_psi,alfa_r,alfa_z);
+
         }else{
             ;int idx = idx_loop_voltage_before_bd;
         }
-
+        return bd_key;
     }
 
 }

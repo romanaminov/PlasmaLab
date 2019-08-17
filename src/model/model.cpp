@@ -111,10 +111,11 @@ namespace  PlasmaLab {
                 currents[j][i] = currents[j-1][i] + (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) / 6;
 
             if(breakdown_key != IsBreakdown::yes){
-               ;// breakdown_key =  functionals.get_BeforeBD().run(j - 1,currents,derivative_of_current,
-                  //                                                                       alfa_psi,alfa_r,alfa_z );//проверка на выполнение условий для пробой
+                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z );//проверка на выполнение условий для пробой
                 breakdown_time = j - 1;
                 breakdown_time *= integration_step;//вычисляем время пробоя
+                if(breakdown_key == IsBreakdown::yes)
+                    cout << "breakdown_time = "<<breakdown_time<< endl;
             }
         }
         return 0;
@@ -261,6 +262,7 @@ namespace  PlasmaLab {
 
             tmp1 = tmp2 - tmp1;
             if(breakdown_key == IsBreakdown::yes){
+               // cout << "e";
                 val = law_of_plasma_current(time_step);
                 tmp2 = 0;
                 for (uint64_t j = 0; j < control_points_count; ++j)
@@ -273,19 +275,45 @@ namespace  PlasmaLab {
     }    
     double Model::law_of_plasma_current(double current_time)
     {
-        double k = 0,
-               t = current_time;
-        if(!required_current_plasma.empty())
-            t += required_current_plasma[0];
+       /*double k=0;
+        if(current_time <= 1.1805)
+            k = (71971.224 - 0)/(1.1805 - 1.1268);
+        else if(current_time <= 1.2341)
+            k = (133149.7 - 71971.224)/(1.2341 - 1.1805);
+        else if(current_time <= 1.2878)
+            k = (185931.58 - 133149.7)/(1.2878 - 1.2341);
+        else if(current_time <= 1.3415)
+            k = (231930.25 - 185931.58)/(1.3415 - 1.2878);
+        else if(current_time <= 1.3951)
+            k = (273716.56 - 231930.25)/(1.3951 - 1.3415);
+        else if(current_time <= 1.4488)
+            k = (313873.73- 273716.56)/(1.4488- 1.3951);
+        else if(current_time <= 1.5024)
+            k = (353530.87 - 313873.73)/(1.5024 - 1.4488);
+        else if(current_time <= 1.5561)
+            k = (392298.85 - 353530.87)/(1.5561 - 1.5024);
+        else if(current_time <= 1.6098)
+            k = (429749.42 - 392298.85)/(1.6098 - 1.5561);
+        else if(current_time <= 1.6634)
+            k = (466027.29 - 429749.42)/(1.6634 - 1.6098);
+
+        k=k/5;
+        return k;*/
+        double t = 0.0,
+               k = 0.0;
+        if(required_current_plasma.empty())
+            cout << "ERROR: current plasma file is empty!\n";
+        t = required_current_plasma[0];
         for(uint64_t i = 3; i <= required_current_plasma.size(); i += 2 )
         {
-            t += required_current_plasma[i - 1];
+            t = required_current_plasma[i - 1];
             if(current_time <= t){
                 k = (required_current_plasma[i] - required_current_plasma[i - 2]);
-                k /= (required_current_plasma[i - 1]);
+                k /= (required_current_plasma[i - 1] - required_current_plasma[i - 3]);
+                break;
             }
         }
         k = k / control_points_count;
-        return k;
+        return k; // возвращаем К, т.к. нам нужна производная тока плазмы
     }
 }
