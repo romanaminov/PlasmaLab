@@ -5,7 +5,7 @@
 #ifndef WRITE_DATA_H
 #define WRITE_DATA_H
 
-#include <src/model/model.h>
+#include "../model/model.h"
 
 namespace  PlasmaLab {
 

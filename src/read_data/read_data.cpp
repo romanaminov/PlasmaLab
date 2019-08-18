@@ -1,4 +1,4 @@
-#include "src/read_data/read_data.h"
+#include "read_data.h"
 
 
 namespace PlasmaLab{
@@ -81,18 +81,18 @@ namespace PlasmaLab{
         text_parser(str_tmp,TypeVariable::type_double,str_empty,integration_step);
         getline(reader,str_tmp);//razmernost' sistemy
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
-        system_size = (int)val_empty;
+        system_size = static_cast<uint64_t>(val_empty);
         getline(reader,str_tmp);//kol-vo control coils
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
-        coils_count = (int)val_empty;
+        coils_count = static_cast<uint64_t>(val_empty);
         getline(reader,str_tmp);//pogreshnost'
         text_parser(str_tmp,TypeVariable::type_double,str_empty,epsilon);
         getline(reader,str_tmp);//control points
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
-        control_points_count = (int)val_empty;
+        control_points_count = static_cast<uint64_t>(val_empty);
         getline(reader,str_tmp);//obrezal'shik
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
-        short_step = (int)val_empty;
+        short_step = static_cast<uint8_t>(val_empty);
         getline(reader,str_tmp);//loop voltage
         text_parser(str_tmp,TypeVariable::type_double,str_empty,required_loop_voltage);
         getline(reader,str_tmp);//radial field max
@@ -101,20 +101,20 @@ namespace PlasmaLab{
         text_parser(str_tmp,TypeVariable::type_double,str_empty,z_field_max);
 
         getline(reader,str_tmp);//propusk stroki
-        for(int i=0;i<coils_count;i++){
+        for(uint64_t i=0;i<coils_count;i++){
             getline(reader,str_tmp);
             text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
             currents_max.push_back(val_empty);
         }
         getline(reader,str_tmp);
-        for(int i=0;i<coils_count;i++){
+        for(uint64_t i=0;i<coils_count;i++){
             getline(reader,str_tmp);
             text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
             voltages_max.push_back(val_empty);
         }
 
         getline(reader,str_tmp);
-        for(int i=0;i<coils_count;i++){
+        for(uint64_t i=0;i<coils_count;i++){
             getline(reader,str_tmp);
             text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
             mag_fields_max.push_back(val_empty);
@@ -123,7 +123,7 @@ namespace PlasmaLab{
 
         getline(reader,str_tmp);
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
-        work_mode = val_empty;
+        work_mode = static_cast<uint64_t>(val_empty);
 
         for(int i=0;i<9/*кол-во функционалов*/;i++){
             getline(reader,str_tmp);

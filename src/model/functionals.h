@@ -9,7 +9,8 @@
 #ifndef FUNCTIONALS_H
 #define FUNCTIONALS_H
 
-#include "src/read_data/read_data.h"
+//#include "src/read_data/read_data.h"
+#include "../read_data/read_data.h"
 
 namespace PlasmaLab {
 
@@ -21,14 +22,15 @@ namespace PlasmaLab {
       IsBreakdown bd_key; ///< ключ, был или не был пробой
       bool init_key; ///< ключ, если false, значит первая итерация в методе Рунге-Кутта
       double u_loop; ///< напряжение на обходе
-      vector<double> r_fields; ///< значения радиальной компоненты магнитного поля в контрольных точках
-      vector<double> z_fields; ///< значения вертикальной компоненты магнитного поля в контрольных точках
+      vec_d r_fields; ///< значения радиальной компоненты магнитного поля в контрольных точках
+      vec_d z_fields; ///< значения вертикальной компоненты магнитного поля в контрольных точках
       vec_d max_currents; ///< максимально допустимые токи в полоидальных катушках
+      vec_d max_voltages; ///< максимально допустимые напряжения в полоидальных катушках с источником питания
       double r_field_max, ///< максимальное значения радиальной компоненты магнитного поля в каждой контрольной точке
              z_field_max, ///< максимальное значения вертикальной компоненты магнитного поля в каждой контрольной точке
              nessesary_u_loop; ///< необходимое для пробоя значение напряжения на обходе контура
 
-      void calc_requiments(const vec_d &weighting_factors,vec_d &functional_values,double prev_u_loop);
+      void calc_requiments(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&);
     private:
       void calc_conditions_bd(const vec_d &weighting_factors,vec_d &functional_values,uint64_t point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
                               const vvec_d &alfa_r,const vvec_d &alfa_z);
@@ -37,7 +39,8 @@ namespace PlasmaLab {
       /*единственно возможный конструктор*/
       BeforeBD(const ReadData &rd);
       /*проверка условий пробоя, выполнены ли они.*/
-      IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
+      IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&,
+                      const vvec_d&,const vvec_d&,const vvec_d&, const vec_d&);
 
       /*получить текущее значение напряжения на обходе*/
       double get_u_loop() const;
@@ -71,7 +74,7 @@ namespace PlasmaLab {
             bd_key = IsBreakdown::no;
         }
 
-        IsBreakdown run(uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&);
+        IsBreakdown run(uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&,const vec_d&);
 
         //const BeforeBD &get_BeforeBD() const { return beforeBD; }
         IsBreakdown get_IsBreakdown() {return bd_key;}

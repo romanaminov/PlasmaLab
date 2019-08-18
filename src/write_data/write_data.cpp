@@ -1,4 +1,4 @@
-#include <src/write_data/write_data.h>
+#include "write_data.h"
 
 #include <QDir>
 

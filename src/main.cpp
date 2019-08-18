@@ -3,10 +3,10 @@
 #include <chrono>
 #include <QTextCodec>
 #include <iostream>
-#include <src/read_data/read_data.h>
-#include <src/model/model.h>
-#include <src/write_data/write_data.h>
-
+#include "read_data/read_data.h"
+#include "model/model.h"
+#include "write_data/write_data.h"
+#include <QtCore\QtCore>
 using namespace PlasmaLab;
 
 int main(int argc, char *argv[])

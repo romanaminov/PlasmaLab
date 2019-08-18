@@ -6,7 +6,7 @@
 #define READ_DATA_H
 
 #include <QString>
-#include "src/common.h"
+#include "../common.h"
 
 namespace PlasmaLab {
 
@@ -25,11 +25,11 @@ namespace PlasmaLab {
      * класса не рекомендуется.
      */
     class ReadData{
-        uint64_t system_size;                        ///размерность системы уравнений, до того как возникла плазма
-        uint64_t coils_count;                        ///количество управляющих катушек
-        uint8_t short_step;                         ///чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
-        uint64_t control_points_count;               ///количество контрольных точек на контуре плазмы
-        int work_mode;                          ///режим работы программы
+        uint8_t short_step;                     ///чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
+        uint64_t system_size;                   ///размерность системы уравнений, до того как возникла плазма
+        uint64_t coils_count;                   ///количество управляющих катушек
+        uint64_t control_points_count;          ///количество контрольных точек на контуре плазмы
+        uint64_t work_mode;                     ///режим работы программы
 
         double required_loop_voltage;           ///необходимое для пробоя плазмы напряжение на обходе
         double r_field_max, z_field_max;        ///максимальные значения радиальной и вертикальной составляющих магнит. поля в контрольных точках в момент пробоя
@@ -78,140 +78,188 @@ namespace PlasmaLab {
         Возвращет кусочно-линейные функции напряжений в управляющих катушках
         \param[out] vvec_d &vvec вектор, в который записываются данные значения
         */
-        inline void get_voltage_in_coils(vvec_d& vvec) const{                  vvec = voltage_in_coils;}
+        void get_voltage_in_coils(vvec_d& vvec) const{
+            vvec = voltage_in_coils;
+        }
         /*!
         Возвращет проверочные значения полоидальных токов.
         \param[out] vvec_d &vvec вектор, в который записываются данные значения
         */
-        inline void get_test_currents_in_coils(vvec_d& vvec) const{            vvec = test_currents_in_coils;}
+        void get_test_currents_in_coils(vvec_d& vvec) const {
+            vvec = test_currents_in_coils;
+        }
         /*!
         Возвращет максимальные значения допустимых токов в полоидальных катушках.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_currents_max(vec_d& vec) const{                        vec = currents_max; }
+        void get_currents_max(vec_d& vec) const {
+            vec = currents_max;
+        }
         /*!
         Возвращет максимальные значения допустимых напряжений в полоидальных катушках.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_voltages_max(vec_d& vec) const{                        vec = voltages_max; }
+        void get_voltages_max(vec_d& vec) const {
+            vec = voltages_max;
+        }
         /*!
         Возвращет максимальные значения допустимых магнитных полей в полоидальных катушках.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_mag_fields_max(vec_d& vec) const{                      vec = mag_fields_max; }
+        void get_mag_fields_max(vec_d& vec) const {
+            vec = mag_fields_max;
+        }
         /*!
         Возвращет весовые коэффициенты функционала, используются в режиме оптимизации.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_weight_coefficient(vec_d& vec) const{                  vec = weight_coefficient; }
+        void get_weight_coefficient(vec_d& vec) const {
+            vec = weight_coefficient;
+        }
         /*!
         Возвращет сопротивления в контурах.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_resistance(vec_d& vec) const{                          vec = resistance;}
+        void get_resistance(vec_d& vec) const {
+            vec = resistance;
+        }
         /*!
         Возвращет матрицу собственных и взаимных индуктивностей контуров системы. Без учета плазменного шнура.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_inductance(vec_d& vec) const{                          vec = inductance;}
+        void get_inductance(vec_d& vec) const {
+            vec = inductance;
+        }
         /*!
         Возвращет начальные токи в полоидальных катушках.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_initial_currents(vec_d& vec) const{                    vec = initial_currents;}
+        void get_initial_currents(vec_d& vec) const {
+            vec = initial_currents;
+        }
         /*!
         Возвращет заранее посчитанные коэффициенты.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_alfa_psi(vec_d& vec) const{                            vec = alfa_psi;}
+        void get_alfa_psi(vec_d& vec) const {
+            vec = alfa_psi;
+        }
         /*!
         Возвращет заранее посчитанные коэффициенты.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_alfa_r(vec_d& vec) const{                              vec = alfa_r;}
+        void get_alfa_r(vec_d& vec) const {
+            vec = alfa_r;
+        }
         /*!
         Возвращет заранее посчитанные коэффициенты.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_alfa_z(vec_d& vec) const{                              vec = alfa_z;}
+        void get_alfa_z(vec_d& vec) const {
+            vec = alfa_z;
+        }
         /*!
         Возвращет кусочно-линейную функцию тока плазмы. В качестве времени используются приращения от предыдущего момента времени.
         \param[out] vec_d &vec вектор, в который записываются данные значения
         */
-        inline void get_required_current_plasma(vec_d& vec) const{             vec = required_current_plasma;}
+        void get_required_current_plasma(vec_d& vec) const {
+            vec = required_current_plasma;
+        }
         /*!
         Возвращет время моделирования системы
         \result double work_time
         */
-        inline double get_work_time() const{                                   return work_time;}
+        double get_work_time() const {
+            return work_time;
+        }
         /*!
         Возвращет шаг интегрированя системы линейных дифф. уравнений в методе Рунге-Кутта 4 порядка точности
         \result double integration_step
         */
-        inline double get_integration_step() const{                            return integration_step;}
+        double get_integration_step() const {
+            return integration_step;
+        }
         /*!
         Возвращет погрешность вычислений
         \result double epsilon
         */
-        inline double get_epsilon() const{                                     return epsilon; }
+        double get_epsilon() const {
+            return epsilon;
+        }
         /*!
         Возвращет максимальные значения радиальной (в полярной системе координат) составляющей магнит. поля в контрольных точках в момент пробоя
         \result double r_field_max
         */
-        inline double get_r_field_max() const{                                 return r_field_max; }
+        double get_r_field_max() const {
+            return r_field_max;
+        }
         /*!
         Возвращет максимальные значения вертикальной (в полярной системе координат) составляющей магнит. поля в контрольных точках в момент пробоя
         \result double z_field_max
         */
-        inline double get_z_field_max() const{                                 return z_field_max; }
+        double get_z_field_max() const {
+            return z_field_max;
+        }
         /*!
         Возвращет необходимое для пробоя напряжение на обходе.
         \result double required_loop_voltage
         */
-        inline double get_required_loop_voltage() const{                       return required_loop_voltage; }
+        double get_required_loop_voltage() const {
+            return required_loop_voltage;
+        }
         /*!
         Возвращет тип режима работы программы (моделирование либо метод оптимизации)
         \result int work_mode
         */
-        inline int get_work_mode() const{                                      return work_mode; }
+        int get_work_mode() const {
+            return work_mode;
+        }
         /*!
         Возвращет размерность решаемой системы линейных дифф. уравнений 1го порядка (а также кол-во контуров в системе)
         \result int system_size
         */
-        inline uint64_t get_system_size() const{                                    return system_size;}
+        uint64_t get_system_size() const {
+            return system_size;
+        }
         /*!
         чтобы не грузить систему, полученные данные записываем в файл с шагом short_step умноженное на integration_step
         \result int short_step
         */
-        inline uint8_t get_short_step() const{                                     return short_step; }
+        uint8_t get_short_step() const {
+            return short_step;
+        }
         /*!
         Возвращает кол-во контрольных точек в плазменном шнуре.
         \result int control_points_count
         */
-        inline uint64_t get_control_points() const{                                 return control_points_count; }
+        uint64_t get_control_points() const {
+            return control_points_count;
+        }
         /*!
         Возвращает кол-во полоидальных катушек.
         \result int coils_count
         */
-        inline uint64_t get_coils_count() const{                                    return coils_count; }
+        uint64_t get_coils_count() const {
+            return coils_count;
+        }
         /*!
         Изменяет начальный ток в какой-либо управляющей катушке.
         \param[in] int, double Номер катушки и добавляемое значение.
         \result int 0, если все хорошо.
         */
-        inline int change_initial_current_for_coil(int, double);
+        int change_initial_current_for_coil(int, double);
         /*!
         Изменяет сопротивление в каком-либо контуре.
         \param[in] int, double Номер контура и добавляемое значение.
         \result int 0, если все хорошо.
         */
-        inline int change_resistance_for_coil(int, double);
+        int change_resistance_for_coil(int, double);
         /*!
         Изменяет напряжение в какой-либо управляющей катушке.
         \param[in] int, double Номер катушки и добавляемое значение.
         \result int 0, если все хорошо.
         */
-        inline int change_voltage_for_coil(int, int, double);
+        int change_voltage_for_coil(int, int, double);
 
     //функции-утилиты
         inline int text_parser(const string &, TypeVariable, string&, double&);

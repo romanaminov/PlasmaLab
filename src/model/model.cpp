@@ -1,4 +1,4 @@
-#include "src/model/model.h"
+#include "model.h"
 
 namespace  PlasmaLab {
     Model::Model(void)
@@ -111,7 +111,7 @@ namespace  PlasmaLab {
                 currents[j][i] = currents[j-1][i] + (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) / 6;
 
             if(breakdown_key != IsBreakdown::yes){
-                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z );//проверка на выполнение условий для пробой
+                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
                 breakdown_time = j - 1;
                 breakdown_time *= integration_step;//вычисляем время пробоя
                 if(breakdown_key == IsBreakdown::yes)
@@ -262,7 +262,6 @@ namespace  PlasmaLab {
 
             tmp1 = tmp2 - tmp1;
             if(breakdown_key == IsBreakdown::yes){
-               // cout << "e";
                 val = law_of_plasma_current(time_step);
                 tmp2 = 0;
                 for (uint64_t j = 0; j < control_points_count; ++j)

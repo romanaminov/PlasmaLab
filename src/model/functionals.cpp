@@ -1,4 +1,4 @@
-#include "src/model/functionals.h"
+#include "functionals.h"
 
 namespace  PlasmaLab {
     BeforeBD::BeforeBD(const ReadData &rd) :
@@ -15,21 +15,24 @@ namespace  PlasmaLab {
             r_fields.push_back(0);
             z_fields.push_back(0);
         }
+        rd.get_currents_max(max_currents);
+        rd.get_voltages_max(max_voltages);
     }
-    IsBreakdown BeforeBD::run(const vec_d &weighting_factors,
-                              vec_d &functional_values,
-                              IsRequirements &out_requiments_key,
-                              uint64_t point,
-                              const vvec_d &currents,
-                              const vvec_d &derivative_of_current,
-                              const vvec_d &alfa_psi,
-                              const vvec_d &alfa_r,
-                              const vvec_d &alfa_z)
+    IsBreakdown BeforeBD::run(const vec_d& weighting_factors,
+                              vec_d& functional_values,
+                              IsRequirements& out_requiments_key,
+                              uint64_t      point,
+                              const vvec_d& currents,
+                              const vvec_d& derivative_of_current,
+                              const vvec_d& alfa_psi,
+                              const vvec_d& alfa_r,
+                              const vvec_d& alfa_z,
+                              const vec_d&  voltages_in_some_momente)
     {
         double prev_u_loop = u_loop;
         calc_conditions_bd(weighting_factors,functional_values,point,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z);
 
-       // calc_requiments(weighting_factors,functional_values,prev_u_loop);
+        calc_requiments(weighting_factors,functional_values, point,currents, prev_u_loop,voltages_in_some_momente);
 
         out_requiments_key = requiments_key;
 
@@ -65,19 +68,32 @@ namespace  PlasmaLab {
 
     void BeforeBD::calc_requiments(const vec_d &weighting_factors,
                                    vec_d &functional_values,
-                                   double prev_u_loop){
+                                   uint64_t point,
+                                   const vvec_d &currents,
+                                   double prev_u_loop,
+                                   const vec_d&  voltages_in_some_momente){
         if(bd_key == IsBreakdown::no && init_key == false)
             prev_u_loop = u_loop;//необходимо для вычисления производной напряжения на обходе
 
-        if(bd_key == IsBreakdown::no && prev_u_loop > u_loop) //значит производная напряжения на обходе < 0, что не допустимо
+        if(bd_key == IsBreakdown::no && prev_u_loop > u_loop){ //значит производная напряжения на обходе < 0, что не допустимо
             requiments_key = IsRequirements::no;
+            cout << "ERROR: prev_u_loop > u_loop\n";
+        }
 
-        /*for(uint i = 0; i < number_coils; ++i){//токи в катушках должны быть не больше максимальных значений
+        for(uint i = 0; i < number_coils; ++i){//токи в катушках должны быть не больше максимальных значений
             if( (currents[point][i] < max_currents[i])&&(currents[point][i] > -max_currents[i]) )
                 requiments_key = IsRequirements::yes;
-            else
+            else{
                 requiments_key = IsRequirements::no;
-        }*/
+                cout << "ERROR: currents in active coils is more max values\n";
+            }
+            if( (voltages_in_some_momente[i] < max_voltages[i])&&(voltages_in_some_momente[i] > -max_voltages[i]) )
+                requiments_key = IsRequirements::yes;
+            else{
+                requiments_key = IsRequirements::no;
+                cout << "ERROR: voltages in active coils is more max values\n";
+            }
+        }
     }
 
     IsBreakdown AfterBD::run(const vec_d &weighting_factors,
@@ -91,17 +107,19 @@ namespace  PlasmaLab {
                              const vvec_d &alfa_z)
     {
         int i = 0;
+        return IsBreakdown::yes;
     }
 
     IsBreakdown FunctionalModel::run(uint64_t point,
-                              const vvec_d &currents,
-                              const vvec_d &derivative_of_current,
-                              const vvec_d &alfa_psi,
-                              const vvec_d &alfa_r,
-                              const vvec_d &alfa_z)
+                              const vvec_d& currents,
+                              const vvec_d& derivative_of_current,
+                              const vvec_d& alfa_psi,
+                              const vvec_d& alfa_r,
+                              const vvec_d& alfa_z,
+                              const vec_d&  voltages_in_some_momente)
     {
         if(bd_key == IsBreakdown::no){
-            bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,currents,derivative_of_current, alfa_psi,alfa_r,alfa_z);
+            bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
 
         }else{
             ;int idx = idx_loop_voltage_before_bd;

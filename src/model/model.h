@@ -8,8 +8,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "src/read_data/read_data.h"
-#include "src/model/functionals.h"
+#include "../read_data/read_data.h"
+#include "functionals.h"
 
 namespace PlasmaLab {
 

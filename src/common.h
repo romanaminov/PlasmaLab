@@ -34,6 +34,18 @@ namespace PlasmaLab {
     using vec_d  = vector<double>;
     using vvec_d = vector<vector<double>>;
 
+    const vector<uint8_t> coilsWithResistance = {0, 1, 2, 3, 4, 5, 10};
+    /*enum class CoilsWithResistance
+    {
+            cs3u    = 0,
+            cs2u    = 1,
+            cs1     = 2,
+            cs2l    = 3,
+            cs3l    = 4,
+            pf1     = 5,
+            pf6     = 10,
+            count = 7
+    };*/
     enum class WorkMode
     {
         no_optimization                     = 0,
