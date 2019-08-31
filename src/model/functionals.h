@@ -59,21 +59,27 @@ namespace PlasmaLab {
 
 
     class AfterBD : protected BeforeBD {
-        IsBreakdown run(const vec_d &weighting_factors,vec_d &functional_values,IsRequirements &out_requiments_key,int point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
-                                    const vvec_d &alfa_r,const vvec_d &alfa_z);
+        void calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&);
+    public:
+        AfterBD() = delete;
+        /*единственно возможный конструктор*/
+        AfterBD(const ReadData &rd);
+        IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&,
+                        const vvec_d&,const vvec_d&,const vvec_d&, const vec_d&);
     };
 
     class FunctionalModel{
 
         const uint size_func_idx = FuncIdx::count; ///< общее кол-во штрахных функций +1 общий функионал суммы
         BeforeBD beforeBD; ///< модель функционала до пробоя
+        AfterBD afterBD; ///< модель функционала после пробоя
         IsBreakdown bd_key; ///< был или не был пробой
         IsRequirements requirements_key; ///< соблюдены ли технологические и физические ограничения на систему
         vec_d weighting_factors; ///< веса для значений штрафных функций (функционалом)
         vec_d functional_values; ///< значения штрафных функций
     public:
         FunctionalModel() = delete;
-        FunctionalModel(const ReadData &rd) : beforeBD(rd){
+        FunctionalModel(const ReadData &rd) : beforeBD(rd), afterBD(rd){
             bd_key = IsBreakdown::no;
         }
 

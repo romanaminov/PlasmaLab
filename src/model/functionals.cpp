@@ -103,7 +103,6 @@ namespace  PlasmaLab {
         //максимальные значения резистивных напряжений для полоидальных катушек не должны превышать максимума
         uint64_t j = coilsWithResistance[i];
             double val = voltages_in_some_momente[j] * resistance[system_size*j+ j];
-          //  cout << "resistance[system_size*j+ j] = " << resistance[system_size*j+ j] << endl;
             if( (val < max_res_voltages[i])&&(val > -max_res_voltages[i]) )
                 requiments_key = IsRequirements::yes;
             else{
@@ -111,20 +110,31 @@ namespace  PlasmaLab {
                 cout << "ERROR: resistive voltage in active coils is more max values\n";
             }
         }
-       // system("pause");
     }
 
-    IsBreakdown AfterBD::run(const vec_d &weighting_factors,
-                             vec_d &functional_values,
-                             IsRequirements &out_requiments_key,
-                             int point,
-                             const vvec_d &currents,
-                             const vvec_d &derivative_of_current,
-                             const vvec_d &alfa_psi,
-                             const vvec_d &alfa_r,
-                             const vvec_d &alfa_z)
+    AfterBD::AfterBD(const ReadData &rd) : BeforeBD (rd){}
+
+    void AfterBD::calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&){
+
+    }
+
+    IsBreakdown AfterBD::run(const vec_d& weighting_factors,
+                             vec_d& functional_values,
+                             IsRequirements& out_requiments_key,
+                             uint64_t      point,
+                             const vvec_d& currents,
+                             const vvec_d& derivative_of_current,
+                             const vvec_d& alfa_psi,
+                             const vvec_d& alfa_r,
+                             const vvec_d& alfa_z,
+                             const vec_d&  voltages_in_some_momente)
     {
-        int i = 0;
+        calc_requiments(weighting_factors,functional_values, point,currents, 0,voltages_in_some_momente);
+
+        calc_requiments_afterDB(weighting_factors,functional_values, point,currents, 0,voltages_in_some_momente);
+
+        out_requiments_key = requiments_key;
+
         return IsBreakdown::yes;
     }
 
@@ -137,10 +147,11 @@ namespace  PlasmaLab {
                               const vec_d&  voltages_in_some_momente)
     {
         if(bd_key == IsBreakdown::no){
-            bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
-
+            bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,
+                                  currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
         }else{
-            ;int idx = idx_loop_voltage_before_bd;
+            bd_key = afterBD.run(weighting_factors,functional_values,requirements_key,point,
+                                  currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
         }
         return bd_key;
     }
