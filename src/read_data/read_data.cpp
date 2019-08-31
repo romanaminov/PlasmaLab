@@ -119,13 +119,22 @@ namespace PlasmaLab{
             text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
             mag_fields_max.push_back(val_empty);
         }
+
+        getline(reader,str_tmp);
+        getline(reader,str_tmp);
+        for(uint64_t i = 0;i < coilsWithResistance.size(); i++){
+            getline(reader,str_tmp);
+            text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
+            res_voltages_max.push_back(val_empty);
+        }
+
         getline(reader,str_tmp);
 
         getline(reader,str_tmp);
         text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
         work_mode = static_cast<uint64_t>(val_empty);
 
-        for(int i=0;i<9/*кол-во функционалов*/;i++){
+        for(int i = 0;i < FuncIdx::count/*кол-во функционалов*/;i++){
             getline(reader,str_tmp);
             text_parser(str_tmp,TypeVariable::type_double,str_empty,val_empty);
             weight_coefficient.push_back(val_empty);

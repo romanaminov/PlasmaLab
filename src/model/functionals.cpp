@@ -17,6 +17,9 @@ namespace  PlasmaLab {
         }
         rd.get_currents_max(max_currents);
         rd.get_voltages_max(max_voltages);
+        rd.get_res_voltages_max(max_res_voltages);
+        rd.get_resistance(resistance);
+        system_size = rd.get_system_size();
     }
     IsBreakdown BeforeBD::run(const vec_d& weighting_factors,
                               vec_d& functional_values,
@@ -80,13 +83,15 @@ namespace  PlasmaLab {
             cout << "ERROR: prev_u_loop > u_loop\n";
         }
 
-        for(uint i = 0; i < number_coils; ++i){//токи в катушках должны быть не больше максимальных значений
+        for(uint i = 0; i < number_coils; ++i){
+            //токи в катушках должны быть не больше максимальных значений
             if( (currents[point][i] < max_currents[i])&&(currents[point][i] > -max_currents[i]) )
                 requiments_key = IsRequirements::yes;
             else{
                 requiments_key = IsRequirements::no;
                 cout << "ERROR: currents in active coils is more max values\n";
             }
+            //напряжения в катушках должны быть не больше максимальных значений
             if( (voltages_in_some_momente[i] < max_voltages[i])&&(voltages_in_some_momente[i] > -max_voltages[i]) )
                 requiments_key = IsRequirements::yes;
             else{
@@ -94,6 +99,19 @@ namespace  PlasmaLab {
                 cout << "ERROR: voltages in active coils is more max values\n";
             }
         }
+        for(uint64_t i = 0;i < coilsWithResistance.size(); i++){
+        //максимальные значения резистивных напряжений для полоидальных катушек не должны превышать максимума
+        uint64_t j = coilsWithResistance[i];
+            double val = voltages_in_some_momente[j] * resistance[system_size*j+ j];
+          //  cout << "resistance[system_size*j+ j] = " << resistance[system_size*j+ j] << endl;
+            if( (val < max_res_voltages[i])&&(val > -max_res_voltages[i]) )
+                requiments_key = IsRequirements::yes;
+            else{
+                requiments_key = IsRequirements::no;
+                cout << "ERROR: resistive voltage in active coils is more max values\n";
+            }
+        }
+       // system("pause");
     }
 
     IsBreakdown AfterBD::run(const vec_d &weighting_factors,
