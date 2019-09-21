@@ -110,13 +110,33 @@ namespace  PlasmaLab {
                 cout << "ERROR: resistive voltage in active coils is more max values\n";
             }
         }
+        //if(prev_u_loop == 0.0)
+          //  cout << "=====\n";
     }
 
     AfterBD::AfterBD(const ReadData &rd) : BeforeBD (rd){}
 
-    void AfterBD::calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&){
+    void AfterBD::calc_requiments_afterDB(const vec_d &weighting_factors,
+                                          vec_d &functional_values,
+                                          uint64_t point,
+                                          const vvec_d &currents,
+                                          const vvec_d &derivative_of_current,
+                                          const vvec_d &alfa_z){
+        requiments_key =  IsRequirements::yes;
+        for(uint i = 0;i < bdPointsCoordinates.size(); ++i) //находим магнитное поле в контрольных точках
+            matrix_multiplier(z_fields[i],currents[point], alfa_z[i]);
+        for(uint i = 0; i < bdPointsCoordinates.size(); ++i){
+            if(fabs(z_fields[i]) >= z_field_max){
+                requiments_key =  IsRequirements::no;//если вертикальная компонента маг.поля больше МАХ
+                //cout << "wwwwww" << endl;
+            }else {
+                ;//cout << "kkkk" << endl;
+            }
+        }
+
 
     }
+
 
     IsBreakdown AfterBD::run(const vec_d& weighting_factors,
                              vec_d& functional_values,
@@ -131,7 +151,8 @@ namespace  PlasmaLab {
     {
         calc_requiments(weighting_factors,functional_values, point,currents, 0,voltages_in_some_momente);
 
-        calc_requiments_afterDB(weighting_factors,functional_values, point,currents, 0,voltages_in_some_momente);
+        calc_requiments_afterDB(weighting_factors,functional_values, point,currents, derivative_of_current,alfa_z);
+
 
         out_requiments_key = requiments_key;
 
@@ -147,11 +168,13 @@ namespace  PlasmaLab {
                               const vec_d&  voltages_in_some_momente)
     {
         if(bd_key == IsBreakdown::no){
+             //cout << "nn" << endl;
             bd_key = beforeBD.run(weighting_factors,functional_values,requirements_key,point,
                                   currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
         }else{
             bd_key = afterBD.run(weighting_factors,functional_values,requirements_key,point,
                                   currents,derivative_of_current, alfa_psi,alfa_r,alfa_z,voltages_in_some_momente);
+            bd_key = IsBreakdown::yes;
         }
         return bd_key;
     }

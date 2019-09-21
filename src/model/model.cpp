@@ -116,6 +116,11 @@ namespace  PlasmaLab {
                 breakdown_time *= integration_step;//вычисляем время пробоя
                 if(breakdown_key == IsBreakdown::yes)
                     cout << "breakdown_time = "<<breakdown_time<< endl;
+            }else {
+                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
+                breakdown_time = j - 1;
+                breakdown_time *= integration_step;//вычисляем время пробоя
+
             }
         }
         return 0;

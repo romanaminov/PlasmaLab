@@ -59,7 +59,7 @@ namespace PlasmaLab {
 
 
     class AfterBD : protected BeforeBD {
-        void calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&);
+        void calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,const vvec_d&,const vvec_d&);
     public:
         AfterBD() = delete;
         /*единственно возможный конструктор*/
