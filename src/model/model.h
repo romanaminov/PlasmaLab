@@ -66,7 +66,7 @@ namespace PlasmaLab {
 
         inline void data_preparation(const ReadData &);
         /*уравнения Киргкофа. система ДО и ПОСЛЕ пробоя.*/
-        inline void model_combined_equations(double, vec_d &,vec_d &);
+        inline void model_combined_equations(double, vec_d&, vec_d&, double_t& );
         /*вычислить напряжение в катушке в текущий момент времени*/
         inline void voltage_calculator(double);
         /*вычислить значение текущего времени */
@@ -78,7 +78,7 @@ namespace PlasmaLab {
         /*вычисление напряжения в катушке в момент времени*/
         inline double dependence_U_on_T(double, double, double, double, double);
         /*кусочно-линейная функция тока плазмы*/
-        inline double law_of_plasma_current(double);
+        std::tuple<double_t,double_t> law_of_plasma_current(double);
      public:
         /*!
          * \brief Главная функция.

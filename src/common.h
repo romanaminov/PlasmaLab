@@ -1,4 +1,4 @@
-/*!
+ /*!
   \file
 * В данном файле собраны все константы, используемые в работе программы. Из названий переменных можно понять для чего они.
 */
@@ -15,6 +15,7 @@
 #include <cmath>
 #include <map>
 #include <future>
+#include <tuple>
 
 
 
@@ -35,7 +36,7 @@ namespace PlasmaLab {
     using vvec_d = vector<vector<double>>;
 
     const vector<uint8_t> coilsWithResistance = {0, 1, 2, 3, 4, 5, 10}; ///<  cs3u,cs2u,cs1,cs2l,cs3l.pf1,pf6
-    const vector<pair<double,double>> bdPointsCoordinates = {
+    const vector<std::tuple<double,double>> bdPointsCoordinates = {
         {565,0},
         {585,0},
         {545,0},

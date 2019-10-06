@@ -13,7 +13,6 @@
 #include "../read_data/read_data.h"
 
 namespace PlasmaLab {
-
     /*В классе происходит проверка условий пробоя и вычисление значений интегральных функционалов до Пробоя включительно*/
     class BeforeBD{
     protected:
@@ -32,7 +31,6 @@ namespace PlasmaLab {
       double r_field_max, ///< максимальное значения радиальной компоненты магнитного поля в каждой контрольной точке
              z_field_max, ///< максимальное значения вертикальной компоненты магнитного поля в каждой контрольной точке
              nessesary_u_loop; ///< необходимое для пробоя значение напряжения на обходе контура
-
       void calc_requiments(const vec_d&,vec_d&,uint64_t,const vvec_d&,double, const vec_d&);
     private:
       void calc_conditions_bd(const vec_d &weighting_factors,vec_d &functional_values,uint64_t point,const vvec_d &currents, const vvec_d &derivative_of_current, const vvec_d &alfa_psi,
@@ -44,7 +42,6 @@ namespace PlasmaLab {
       /*проверка условий пробоя, выполнены ли они.*/
       IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&,
                       const vvec_d&,const vvec_d&,const vvec_d&, const vec_d&);
-
       /*получить текущее значение напряжения на обходе*/
       double get_u_loop() const;
       /*получить текущее значение радиальной компоненты магнитного поля в контрольных точках*/
@@ -59,17 +56,16 @@ namespace PlasmaLab {
 
 
     class AfterBD : protected BeforeBD {
-        void calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,const vvec_d&,const vvec_d&,const vvec_d&);
+        void calc_requiments_afterDB(const vec_d&,vec_d&,uint64_t,double_t,const vvec_d&,const vvec_d&,const vvec_d&,const vvec_d&);
     public:
         AfterBD() = delete;
         /*единственно возможный конструктор*/
         AfterBD(const ReadData &rd);
-        IsBreakdown run(const vec_d&,vec_d&,IsRequirements&,uint64_t,const vvec_d&, const vvec_d&,
+        IsRequirements run(const vec_d&,vec_d&,uint64_t,double_t, const vvec_d&, const vvec_d&,
                         const vvec_d&,const vvec_d&,const vvec_d&, const vec_d&);
     };
 
     class FunctionalModel{
-
         const uint size_func_idx = FuncIdx::count; ///< общее кол-во штрахных функций +1 общий функионал суммы
         BeforeBD beforeBD; ///< модель функционала до пробоя
         AfterBD afterBD; ///< модель функционала после пробоя
@@ -82,9 +78,7 @@ namespace PlasmaLab {
         FunctionalModel(const ReadData &rd) : beforeBD(rd), afterBD(rd){
             bd_key = IsBreakdown::no;
         }
-
-        IsBreakdown run(uint64_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&,const vec_d&);
-
+        IsBreakdown run(uint64_t,double_t,const vvec_d&, const vvec_d&, const vvec_d&,const vvec_d&,const vvec_d&,const vec_d&);
         //const BeforeBD &get_BeforeBD() const { return beforeBD; }
         IsBreakdown get_IsBreakdown() {return bd_key;}
         IsRequirements get_IsRequirements() {return requirements_key;}

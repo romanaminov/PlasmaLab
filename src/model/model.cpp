@@ -81,7 +81,8 @@ namespace  PlasmaLab {
     }
 
     int Model::runge_kutta_4(FunctionalModel &functionalModel){
-        double time_step = 0;
+        double_t time_step = 0.0,
+                 plasma_current = 0.0;
         vec_d k1(system_size,0),
               k2(system_size,0),
               k3(system_size,0),
@@ -93,31 +94,31 @@ namespace  PlasmaLab {
         for (uint64_t j = 1; j < number_of_steps_in_method; ++j){	//почему  длинна цикла не больше +1
             time_step += integration_step;
             voltage_calculator(time_step);
-            model_combined_equations(time_step, currents[j-1], k1);
+            model_combined_equations(time_step, currents[j-1], k1,plasma_current);
             for (uint64_t i = 0; i < system_size; i++){
                 derivative_of_current[j-1][i] = k1[i] / integration_step;
                 Y_t_1[i] = 0.5 * k1[i] + currents[j-1][i];
             }
             voltage_calculator(time_step + integration_step * 0.5);
-            model_combined_equations(time_step + integration_step * 0.5, Y_t_1, k2);
+            model_combined_equations(time_step + integration_step * 0.5, Y_t_1, k2,plasma_current);
             for (uint64_t i = 0; i < system_size; i++)
                 Y_t_2[i] = 0.5 * k2[i] + currents[j-1][i];
-            model_combined_equations(time_step + integration_step * 0.5, Y_t_2, k3);
+            model_combined_equations(time_step + integration_step * 0.5, Y_t_2, k3,plasma_current);//,plasma_current какое из четырех верное??????
             for (uint64_t i = 0; i < system_size; i++)
                 Y_t_3[i] = k3[i] + currents[j-1][i];
             voltage_calculator(time_step + integration_step);
-            model_combined_equations(time_step + integration_step, Y_t_3, k4);
+            model_combined_equations(time_step + integration_step, Y_t_3, k4,plasma_current);//,plasma_current видимо это???!!!
             for(uint64_t i=0; i < system_size; i++)
                 currents[j][i] = currents[j-1][i] + (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) / 6;
 
             if(breakdown_key != IsBreakdown::yes){
-                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
+                breakdown_key =  functionalModel.run(j - 1,plasma_current,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
                 breakdown_time = j - 1;
                 breakdown_time *= integration_step;//вычисляем время пробоя
                 if(breakdown_key == IsBreakdown::yes)
                     cout << "breakdown_time = "<<breakdown_time<< endl;
             }else {
-                breakdown_key =  functionalModel.run(j - 1,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
+                breakdown_key =  functionalModel.run(j - 1,plasma_current,currents,derivative_of_current,alfa_psi,alfa_r,alfa_z,voltages_in_some_momente );//проверка на выполнение условий для пробой
                 breakdown_time = j - 1;
                 breakdown_time *= integration_step;//вычисляем время пробоя
 
@@ -254,8 +255,14 @@ namespace  PlasmaLab {
         }
         return number;
     }
-    void Model::model_combined_equations(double time_step, vec_d &current_in_some_momente,vec_d &KN){
-        double tmp1 = 0, tmp2 = 0, val=0;
+    void Model::model_combined_equations(double time_step, vec_d &current_in_some_momente,vec_d &KN, double_t& plasma_current){
+        double_t tmp1 = 0.0, tmp2 = 0.0, k = 0.0;
+        if(breakdown_key == IsBreakdown::yes){
+            auto val = law_of_plasma_current(time_step);
+            k = std::get<0>(val);
+            plasma_current = std::get<1>(val);
+        }else
+            plasma_current = 0.0;
 
         for (uint64_t i = 0; i < system_size; ++i){
             tmp1 = 0; tmp2 = 0;
@@ -267,17 +274,16 @@ namespace  PlasmaLab {
 
             tmp1 = tmp2 - tmp1;
             if(breakdown_key == IsBreakdown::yes){
-                val = law_of_plasma_current(time_step);
                 tmp2 = 0;
                 for (uint64_t j = 0; j < control_points_count; ++j)
                     tmp2 = tmp2 + inverse_L_on_Mp_matrix[i * control_points_count + j];
-                tmp2 *= val;
+                tmp2 *= k;
                 tmp1 = tmp1 - tmp2;
             }
             KN[i] = integration_step * tmp1;
         }
-    }    
-    double Model::law_of_plasma_current(double current_time)
+    }
+    std::tuple<double_t,double_t> Model::law_of_plasma_current(double current_time)
     {
        /*double k=0;
         if(current_time <= 1.1805)
@@ -304,7 +310,8 @@ namespace  PlasmaLab {
         k=k/5;
         return k;*/
         double t = 0.0,
-               k = 0.0;
+               k = 0.0,
+               plasma_current = 0.0;
         if(required_current_plasma.empty())
             cout << "ERROR: current plasma file is empty!\n";
         t = required_current_plasma[0];
@@ -314,10 +321,14 @@ namespace  PlasmaLab {
             if(current_time <= t){
                 k = (required_current_plasma[i] - required_current_plasma[i - 2]);
                 k /= (required_current_plasma[i - 1] - required_current_plasma[i - 3]);
+
+                auto b = required_current_plasma[i] - required_current_plasma[i -1] * k;
+                plasma_current = k * current_time - b;
                 break;
             }
         }
-        k = k / control_points_count;
-        return k; // возвращаем К, т.к. нам нужна производная тока плазмы
+        k = k / control_points_count; //параллельное соединение контуров
+        plasma_current = plasma_current / control_points_count;
+        return std::make_tuple (k, plasma_current);// возвращаем К, т.к. нам нужна производная тока плазмы и само значение тока плазмы
     }
 }
