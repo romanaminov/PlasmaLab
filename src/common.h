@@ -35,7 +35,7 @@ namespace PlasmaLab {
     using vec_d  = vector<double>;
     using vvec_d = vector<vector<double>>;
 
-    const vector<uint8_t> coilsWithResistance = {0, 1, 2, 3, 4, 5, 10}; ///<  cs3u,cs2u,cs1,cs2l,cs3l.pf1,pf6
+    const vector<uint8_t> coilsWithResistance = {0, 1, 2, 3, 4, 5, 10}; ///<  cs3u,cs2u,cs1,cs2l,cs3l.pf1,pf6 (катушки с внешним сопротивлением)
     const vector<std::tuple<double,double>> bdPointsCoordinates = {
         {565,0},
         {585,0},
@@ -48,10 +48,10 @@ namespace PlasmaLab {
 */
     enum class WorkMode
     {
-        no_optimization                     = 0,
-        alternating_variable_descent_method = 1,
-        particle_swarm_method               = 2,
-        method_of_steepest_descent          = 3
+        noOptimization                   = 0,
+        alternatingVariableDescentMethod = 1,
+        particleSwarmMethod              = 2,
+        methodOfSteepestDescent          = 3
     };
 
     enum class IsBreakdown
@@ -61,55 +61,55 @@ namespace PlasmaLab {
     };
     enum class IsRequirements
     {
-      yes   = 110, ///< ограничения и требования налагаемые на модель выполены
-      no    = 0 ///< физические и технологические ограничения и требования были нарушены
+        yes   = 110, ///< ограничения и требования налагаемые на модель выполены
+        no    = 0 ///< физические и технологические ограничения и требования были нарушены
     };
     enum FuncIdx{
-        idx_total                               = 0, ///< общий функционал (равный сумме всех штрафных функций)
-        idx_loop_voltage_before_bd              = 1, ///< значений штрафной функции для напряжения на обходе до пробоя
-        idx_r_fields                            = 2, ///< значений штрафной функции для радиальной компоненты маг.поля на всем этапе моделирования
-        idx_z_fields_before_bd                  = 3, ///< значений штрафной функции для вертикальной компоненты маг.поля до пробоя
-        idx_mux_flux_before_bd                  = 4, ///< значений штрафной функции для маг.потока в центре области пробоя до пробоя
-        idx_loop_voltage_derivative_before_bd   = 5, ///< значений штрафной функции для производной напряжения на обходе до пробоя
-        idx_max_currents                        = 6, ///< значений штрафной функции для максимальных значений токов в полоидальных катушках
-        idx_max_voltages                        = 7, ///< значений штрафной функции для максимальных значений напряжений в полоидальных катушках
-        idx_max_res_voltages                    = 8, ///< значений штрафной функции для резистивных напряжений в полоидальных катушках
-        idx_z_fields_after_bd                   = 9, ///< значений штрафной функции для вертикальной компоненты маг.поля в контрольных точках после пробоя
-        count                                   = 10
+        idxTotal                            = 0, ///< общий функционал (равный сумме всех штрафных функций)
+        idxLoopVoltageBeforeBD              = 1, ///< значений штрафной функции для напряжения на обходе до пробоя
+        idxRFields                          = 2, ///< значений штрафной функции для радиальной компоненты маг.поля на всем этапе моделирования
+        idxZFieldsBeforeBD                  = 3, ///< значений штрафной функции для вертикальной компоненты маг.поля до пробоя
+        idxMaxFluxBeforeBD                  = 4, ///< значений штрафной функции для маг.потока в центре области пробоя до пробоя
+        idxLoopVoltageDerivativeBeforeBD    = 5, ///< значений штрафной функции для производной напряжения на обходе до пробоя
+        idxMaxCurrents                      = 6, ///< значений штрафной функции для максимальных значений токов в полоидальных катушках
+        idxMaxVoltages                      = 7, ///< значений штрафной функции для максимальных значений напряжений в полоидальных катушках
+        idxMaxResVoltages                   = 8, ///< значений штрафной функции для резистивных напряжений в полоидальных катушках
+        idxZFieldsAfterBD                   = 9, ///< значений штрафной функции для вертикальной компоненты маг.поля в контрольных точках после пробоя
+        count                               = 10
     };
 
 #ifdef Q_OS_WIN32
-    const string path_for_input_data                            = "input_data\\";
-    const string path_for_output_data                           = "output_data\\";
+    const string pathForInputData                            = "input_data\\";
+    const string pathForOutputData                           = "output_data\\";
 #endif
 
 #ifdef Q_OS_LINUX
-    const string path_for_input_data                            = "input_data/";
-    const string path_for_output_data                           = "output_data/";
+    const string pathForInputData                            = "input_data/";
+    const string pathForOutputData                           = "output_data/";
 #endif
-    const string file_name_for_currents_result                  = "data_currents.txt";
-    const string file_name_for_derivative_currents_result       = "data_derivative_current.txt";
-    const string file_name_for_test_currents                    = "j.dat";
-    const string file_name_for_inductance                       = "matr_ind_univ.dat";
-    const string file_name_for_resistance                       = "matr_res_univ.dat";
-    const string file_name_for_required_current_plasma          = "Ip.dat";
-    const string file_name_for_alfa_z                           = "bz_cache.dat";
-    const string file_name_for_initial_currents                 = "I0.txt";
-    const string file_name_for_alfa_psi_alfa_r_alfa_z           = "matr_field_univ.dat";
-    const vector<string> file_name_for_coils                    = { "cs3u.txt",
-                                                                    "cs2u.txt",
-                                                                    "cs1.txt",
-                                                                    "cs2l.txt",
-                                                                    "cs3l.txt",
-                                                                    "pf1.txt",
-                                                                    "pf2.txt",
-                                                                    "pf3.txt",
-                                                                    "pf4.txt",
-                                                                    "pf5.txt",
-                                                                    "pf6.txt"};
+    const string fileNameForCurrentsResult              = "data_currents.txt";
+    const string fileNameForDerivativeCurrentsResult    = "data_derivative_current.txt";
+    const string fileNameForTestCurrents                = "j.dat";
+    const string fileNameForInductance                  = "matr_ind_univ.dat";
+    const string fileNameForResistance                  = "matr_res_univ.dat";
+    const string fileNameForRequiredCurrentPlasma       = "Ip.dat";
+    const string fileNameForAlfaZ                       = "bz_cache.dat";
+    const string fileNameForInitialCurrents             = "I0.txt";
+    const string fileNameForAlfaPsiAlfaRAlfaZ           = "matr_field_univ.dat";
+    const vector<string> fileNameForCoils               = { "cs3u.txt",
+                                                            "cs2u.txt",
+                                                            "cs1.txt",
+                                                            "cs2l.txt",
+                                                            "cs3l.txt",
+                                                            "pf1.txt",
+                                                            "pf2.txt",
+                                                            "pf3.txt",
+                                                            "pf4.txt",
+                                                            "pf5.txt",
+                                                                "pf6.txt"};
 
-    void matrix_multiplier(const vec_d &, const vec_d &,vec_d &, uint64_t, uint64_t);
-    void matrix_multiplier(double &, const vec_d &,const vec_d &);
+    void matrixMultiplier(const vec_d&, const vec_d&, vec_d&, uint64_t, uint64_t);
+    void matrixMultiplier(double&, const vec_d&, const vec_d&);
 
 }
 

@@ -52,10 +52,10 @@ namespace  PlasmaLab {
                                       const vvec_d &alfa_z)
     {
         bd_key = IsBreakdown::yes;
-        matrix_multiplier(u_loop,derivative_of_current[point], alfa_psi[0]);//напряжение на обходе
+        matrixMultiplier(u_loop,derivative_of_current[point], alfa_psi[0]);//напряжение на обходе
         for(uint i = 0;i < r_fields.size(); ++i){ //находим магнитное поле в контрольных точках
-            matrix_multiplier(r_fields[i],currents[point], alfa_r[i]);
-            matrix_multiplier(z_fields[i],currents[point], alfa_z[i]);
+            matrixMultiplier(r_fields[i],currents[point], alfa_r[i]);
+            matrixMultiplier(z_fields[i],currents[point], alfa_z[i]);
         }
         for(uint i = 0; i < r_fields.size(); ++i){
             if(fabs(r_fields[i]) >= r_field_max)
@@ -126,8 +126,8 @@ namespace  PlasmaLab {
                                           const vvec_d &alfa_z){
         requiments_key =  IsRequirements::yes;
         for(uint i = 0;i < bdPointsCoordinates.size(); ++i){ //находим магнитное поле в контрольных точках
-            matrix_multiplier(z_fields[i],currents[point], alfa_z[i]);
-            matrix_multiplier(r_fields[i],currents[point], alfa_r[i]);
+            matrixMultiplier(z_fields[i],currents[point], alfa_z[i]);
+            matrixMultiplier(r_fields[i],currents[point], alfa_r[i]);
         }
         for(uint i = 0; i < bdPointsCoordinates.size(); ++i){
             if(fabs(z_fields[i]) >= z_field_max)

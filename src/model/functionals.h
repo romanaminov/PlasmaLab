@@ -9,7 +9,7 @@
 #ifndef FUNCTIONALS_H
 #define FUNCTIONALS_H
 
-//#include "src/read_data/read_data.h"
+#include "src/read_data/read_data.h"
 #include "../read_data/read_data.h"
 
 namespace PlasmaLab {

@@ -6,7 +6,7 @@ namespace  PlasmaLab {
 
     int WriteData::main_write(const string &path,const Model &model) const
     {
-        string output_path = path + path_for_output_data;
+        string output_path = path + pathForOutputData;
         if( !QDir(output_path.c_str()).exists() )
             QDir().mkdir(output_path.c_str());
 
@@ -19,9 +19,9 @@ namespace  PlasmaLab {
 
         int res = 0;
 
-        string res_path = output_path + file_name_for_currents_result;
+        string res_path = output_path + fileNameForCurrentsResult;
         auto r1 = std::async(std::launch::async,&WriteData::write,this, res_path, currents, 0 , integration_step, system_size, short_step);
-        string res_path_2 = output_path + file_name_for_derivative_currents_result;
+        string res_path_2 = output_path + fileNameForDerivativeCurrentsResult;
         res |= write(res_path_2, derivative_of_currents, start_time , integration_step, system_size, short_step);
 
         res |= r1.get();

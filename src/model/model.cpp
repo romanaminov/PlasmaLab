@@ -4,7 +4,7 @@ namespace  PlasmaLab {
     Model::Model(void)
     {
         breakdown_key               = IsBreakdown::no;
-        work_mode                   = WorkMode::no_optimization;
+        work_mode                   = WorkMode::noOptimization;
 
         system_size                 = 0;
         coils_count                 = 0;
@@ -202,8 +202,8 @@ namespace  PlasmaLab {
         integration_step = read_data.get_integration_step();
 
         r1.get();
-        matrix_multiplier(inverse_inductance_matrix,resistance_matrix,inverse_L_on_R_matrix,system_size,system_size);
-        matrix_multiplier(inverse_inductance_matrix, plasma_inductance_matrix, inverse_L_on_Mp_matrix,system_size,control_points_count);
+        matrixMultiplier(inverse_inductance_matrix,resistance_matrix,inverse_L_on_R_matrix,system_size,system_size);
+        matrixMultiplier(inverse_inductance_matrix, plasma_inductance_matrix, inverse_L_on_Mp_matrix,system_size,control_points_count);
     }
 
     int Model::main_function(const ReadData& read_data, FunctionalModel &functionalModel){

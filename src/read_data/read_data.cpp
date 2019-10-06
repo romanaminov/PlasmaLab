@@ -142,17 +142,17 @@ namespace PlasmaLab{
 //------------------------------------
         string tmp = read_path;
         string tmp_read_path = read_path;
-        tmp_read_path += path_for_input_data;
+        tmp_read_path += pathForInputData;
 
-        auto r1 = std::async(std::launch::async,&ReadData::load_inductance,this,tmp_read_path, file_name_for_inductance);
-        auto r2 = std::async(std::launch::async,&ReadData::load_resistance,this,tmp_read_path, file_name_for_resistance);
+        auto r1 = std::async(std::launch::async,&ReadData::load_inductance,this,tmp_read_path, fileNameForInductance);
+        auto r2 = std::async(std::launch::async,&ReadData::load_resistance,this,tmp_read_path, fileNameForResistance);
 
         int res = 0;
         res |= load_voltage_in_coils(tmp_read_path);
-        res |= load_alfa_xxx(tmp_read_path, file_name_for_alfa_psi_alfa_r_alfa_z);
-        res |= load_initial_currents(tmp_read_path, file_name_for_initial_currents);
-        res |= load_required_current_plasma(tmp_read_path, file_name_for_required_current_plasma);
-        res |= load_test_currents_in_coils(tmp_read_path, file_name_for_test_currents);
+        res |= load_alfa_xxx(tmp_read_path, fileNameForAlfaPsiAlfaRAlfaZ);
+        res |= load_initial_currents(tmp_read_path, fileNameForInitialCurrents);
+        res |= load_required_current_plasma(tmp_read_path, fileNameForRequiredCurrentPlasma);
+        res |= load_test_currents_in_coils(tmp_read_path, fileNameForTestCurrents);
 
         tmp_read_path = tmp;
 
@@ -366,8 +366,8 @@ namespace PlasmaLab{
         //считываем файлы cs3u cs2u cs1 cs2l cs3l pf1-6
         voltage_in_coils.resize(11,vector<double> (0));
         int res = 0;
-        for(unsigned int i=0;i<file_name_for_coils.size();i++)
-            res |= load_one_coil(read_path,file_name_for_coils[i],i);
+        for(unsigned int i=0;i<fileNameForCoils.size();i++)
+            res |= load_one_coil(read_path,fileNameForCoils[i],i);
         return res;
     }
 
