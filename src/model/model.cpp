@@ -311,7 +311,8 @@ namespace  PlasmaLab {
         return k;*/
         double t = 0.0,
                k = 0.0,
-               plasma_current = 0.0;
+               plasma_current = 0.0,
+               b = 0.0;
         if(required_current_plasma.empty())
             cout << "ERROR: current plasma file is empty!\n";
         t = required_current_plasma[0];
@@ -322,8 +323,8 @@ namespace  PlasmaLab {
                 k = (required_current_plasma[i] - required_current_plasma[i - 2]);
                 k /= (required_current_plasma[i - 1] - required_current_plasma[i - 3]);
 
-                auto b = required_current_plasma[i] - required_current_plasma[i -1] * k;
-                plasma_current = k * current_time - b;
+                b = required_current_plasma[i] - required_current_plasma[i -1] * k;
+                plasma_current = k * current_time + b;
                 break;
             }
         }

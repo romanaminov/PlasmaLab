@@ -37,11 +37,11 @@ namespace PlasmaLab {
 
     const vector<uint8_t> coilsWithResistance = {0, 1, 2, 3, 4, 5, 10}; ///<  cs3u,cs2u,cs1,cs2l,cs3l.pf1,pf6 (катушки с внешним сопротивлением)
     const vector<std::tuple<double,double>> bdPointsCoordinates = {
-        {565,0},
-        {585,0},
-        {545,0},
-        {565,20},
-        {565,-20}
+        {5.65,0},
+        {7.25,0},
+        {4.05,0},
+        {5.65,0.20},
+        {5.65,-0.20}
     };
     /*dr=20  dz=20
      565	0	2.5e-008

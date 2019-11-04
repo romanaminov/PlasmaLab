@@ -119,7 +119,7 @@ namespace  PlasmaLab {
     void AfterBD::calc_requiments_afterDB(const vec_d &weighting_factors,
                                           vec_d &functional_values,
                                           uint64_t point,
-                                          double_t plasma_current,
+                                          double_t plasmaCurrent,
                                           const vvec_d &currents,
                                           const vvec_d &derivative_of_current,
                                           const vvec_d &alfa_r,
@@ -129,25 +129,25 @@ namespace  PlasmaLab {
             matrixMultiplier(z_fields[i],currents[point], alfa_z[i]);
             matrixMultiplier(r_fields[i],currents[point], alfa_r[i]);
         }
-        for(uint i = 0; i < bdPointsCoordinates.size(); ++i){
+        auto sum = 0.0;
+        for(uint i = 0; i < bdPointsCoordinates.size(); ++i) {
             if(fabs(z_fields[i]) >= z_field_max)
                 requiments_key =  IsRequirements::no;//если вертикальная компонента маг. поля больше МАХ
-
-            ///////
-         //   double_t plasma_current, R;
-            /*расчет значений поля греда-шафранова в указанной точке*/
-            auto shafranov = [=](auto plasma, auto R){
-                double_t res = 0;
-                const double_t betaP = 0.2,
-                               li = 0.85,
-                               a = 1.6,
-                               m_0  = 1.25663706 * std::pow(10,-6);
-                res = -M_PI * plasma / (4 * M_PI * R);
-                return res;
-            };
-            auto shafranovField = fabs(shafranov(plasma_current, std::get<0>(bdPointsCoordinates[i])));
-            if( fabs(r_fields[i]) > (shafranovField+0.2) || fabs(r_fields[i]) < (shafranovField - 0.2) )
-                requiments_key =  IsRequirements::no;
+            sum += fabs(z_fields[i]);
+        }
+        auto shafranov = [](auto plasma, auto R){
+            const double_t betaP = 0.2,
+                           li = 0.85,
+                           a = 1.6,
+                           m_0  = 4* M_PI * std::pow(10,-7); //1.25663706 * std::pow(10,-6);
+            return (- m_0 * plasma / (/*4 **/ M_PI * R) * ( log(8*R/a) + betaP + li/2 - 3/2 ));
+            //нихрена не понял почему без множителя "4" все работатет. Шо за пиздец!
+        };
+        sum /= 5;
+        auto shafranovField = fabs(shafranov(plasmaCurrent, std::get<0>(bdPointsCoordinates[0])));
+        if( fabs(sum - shafranovField) > 0.002 ) {
+            requiments_key =  IsRequirements::no;
+            cout << "error: shapfranov = "<< fabs(shafranovField) << ", ness = " << sum << endl;
         }
     }
 
